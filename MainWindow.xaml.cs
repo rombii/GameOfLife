@@ -15,10 +15,13 @@ public partial class MainWindow : Window
     /// List of all living cells
     /// </summary>
     private List<(int, int)> _livingCellsPositions = [];
+    
     /// <summary>
-    /// List of all buttons
+    /// Array of all buttons
+    /// To change number of cells on screen change size of this array and rows and columns of UniformGrid in XAML file
     /// </summary>
-    private readonly Button[,] _buttons = new Button[100,100];
+    private readonly Button[,] _buttons = new Button[80,80];
+    
     /// <summary>
     /// Timer which calls updating life cycle
     /// </summary>

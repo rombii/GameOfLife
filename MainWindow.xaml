@@ -11,7 +11,7 @@
             <Button Height="20" Width="50" Margin="15 30" Name="PlayButton" VerticalAlignment="Top" Content="Play" Click="PlayPauseEventFunction"></Button>
             <TextBox Height="20" Width="50" Margin="0 30" Name="Speed" VerticalAlignment="Top" Text="100" TextChanged="SpeedChangeEventFunction"></TextBox>
             <TextBlock Height="20" Width="50" Margin="15 30" Name="Cords" VerticalAlignment="Top" Text="?; ?"></TextBlock>
-            <UniformGrid Rows="100" Columns="100" Width="800" Height="800" Margin="50 30" Name="GamePanel" VerticalAlignment="Top"></UniformGrid>
+            <UniformGrid Rows="80" Columns="80" Width="800" Height="800" Margin="50 30" Name="GamePanel" VerticalAlignment="Top"></UniformGrid>
         </StackPanel>
     </Grid>
 </Window>
