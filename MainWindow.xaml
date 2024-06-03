@@ -5,12 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GameOfLife"
         mc:Ignorable="d"
-        Title="Game of life" Height="1080" Width="1080" ResizeMode="NoResize">
+        Title="Game of life" Height="900" Width="1080" ResizeMode="NoResize">
     <Grid>
         <StackPanel Orientation="Horizontal">
-            <Button Height="20" Width="20" Name="PlayButton" Click="PlayPause"></Button>
-            <UniformGrid x:Name="GamePanel" Rows="100" Columns="100" Width="800" Height="800" Margin="100 0
-            "></UniformGrid>
+            <Button Height="20" Width="50" Margin="15 30" Name="PlayButton" VerticalAlignment="Top" Content="Play" Click="PlayPauseEventFunction"></Button>
+            <TextBox Height="20" Width="50" Margin="0 30" Name="Speed" VerticalAlignment="Top" Text="100" TextChanged="SpeedChangeEventFunction"></TextBox>
+            <TextBlock Height="20" Width="50" Margin="15 30" Name="Cords" VerticalAlignment="Top" Text="?; ?"></TextBlock>
+            <UniformGrid Rows="100" Columns="100" Width="800" Height="800" Margin="50 30" Name="GamePanel" VerticalAlignment="Top"></UniformGrid>
         </StackPanel>
     </Grid>
 </Window>
