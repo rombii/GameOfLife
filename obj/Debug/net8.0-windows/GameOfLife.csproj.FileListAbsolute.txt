@@ -18,3 +18,4 @@ C:\Users\ys\RiderProjects\GameOfLife\GameOfLife\obj\Debug\net8.0-windows\refint\
 C:\Users\ys\RiderProjects\GameOfLife\GameOfLife\obj\Debug\net8.0-windows\GameOfLife.pdb
 C:\Users\ys\RiderProjects\GameOfLife\GameOfLife\obj\Debug\net8.0-windows\GameOfLife.genruntimeconfig.cache
 C:\Users\ys\RiderProjects\GameOfLife\GameOfLife\obj\Debug\net8.0-windows\ref\GameOfLife.dll
+C:\Users\ys\RiderProjects\GameOfLife\GameOfLife\obj\Debug\net8.0-windows\GameOfLife.sourcelink.json

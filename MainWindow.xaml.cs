@@ -1,13 +1,8 @@
-﻿using System.Text;
+﻿using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Timer = System.Timers.Timer;
 
 namespace GameOfLife;
 
@@ -16,11 +11,17 @@ namespace GameOfLife;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private bool[,] _gamePanelStates = new bool[100, 100];
+    private List<(int, int)> _livingCellsPositions = [];
+    private Button[,] _buttons = new Button[100,100];
+    private readonly Timer _timer = new Timer(1000);
+    
+
     public MainWindow()
     {
         InitializeComponent();
         PrepGameBoard();
+        _timer.Elapsed += OnTimedEvent;
+
     }
 
     private void PrepGameBoard()
@@ -29,8 +30,9 @@ public partial class MainWindow : Window
         {
             for (var j = 0; j < GamePanel.Columns; j++)
             {
-                GamePanel.Children.Add(GetButton(i, j));
-                _gamePanelStates[i, j] = false;
+                var button = GetButton(i, j);
+                GamePanel.Children.Add(button);
+                _buttons[i, j] = button;
             }
         }
     }
@@ -39,17 +41,132 @@ public partial class MainWindow : Window
     {
         var button = (Button)sender;
 
-        if (_gamePanelStates[row, column] == false)
+        if (!_livingCellsPositions.Contains((row, column)))
         {
             button.Background = new SolidColorBrush(Colors.Black);
-            _gamePanelStates[row, column] = true;
+            _livingCellsPositions.Add((row, column));
         }
         else
         {
             button.Background = new SolidColorBrush(Colors.Transparent);
-            _gamePanelStates[row, column] = false;
+            _livingCellsPositions.Remove((row, column));
         }
-            
+    }
+
+    private void OnTimedEvent(object? source, ElapsedEventArgs e)
+    {
+        Dispatcher.Invoke(UpdatingLifeCycle);
+    }
+
+    private void UpdatingLifeCycle()
+    {
+        var tempLivingCellsPositions = new List<(int, int)>(_livingCellsPositions);
+        foreach (var position in _livingCellsPositions)
+        {
+            foreach (var neighbour in GetNeighbours(position.Item1, position.Item2))
+            {
+                if (CheckRules(neighbour.Item1, neighbour.Item2))
+                {
+                    if (!_livingCellsPositions.Contains(neighbour))
+                    {
+                        tempLivingCellsPositions.Add(neighbour);
+                    }
+
+                    _buttons[neighbour.Item1, neighbour.Item2].Background = new SolidColorBrush(Colors.Black);
+                }
+                else
+                {
+                    if (_livingCellsPositions.Contains(neighbour))
+                    {
+                        tempLivingCellsPositions.Remove(neighbour);
+                    }
+
+                    _buttons[neighbour.Item1, neighbour.Item2].Background = new SolidColorBrush(Colors.Transparent);
+                }
+            }
+            if (CheckRules(position.Item1, position.Item2))
+            {
+                if (!_livingCellsPositions.Contains(position))
+                {
+                    tempLivingCellsPositions.Add(position);
+                }
+
+                _buttons[position.Item1, position.Item2].Background = new SolidColorBrush(Colors.Black);
+            }
+            else
+            {
+                if (_livingCellsPositions.Contains(position))
+                {
+                    Console.WriteLine(tempLivingCellsPositions.Contains(position));
+                    tempLivingCellsPositions.Remove(position);
+                    Console.WriteLine(tempLivingCellsPositions.Contains(position));
+                }
+
+                _buttons[position.Item1, position.Item2].Background = new SolidColorBrush(Colors.Transparent);
+            }
+        }
+
+        _livingCellsPositions = tempLivingCellsPositions;
+        tempLivingCellsPositions.Clear();
+        //TODO Check why the list is not properly cleaned after each epoch
+    }
+
+    private bool CheckRules(int y, int x)
+    {
+        var startX = x - 1 < 0 ? x : x - 1;
+        var endX = x + 1 > GamePanel.Columns-1 ? x : x + 1;
+        var startY = y - 1 < 0 ? y : y - 1;
+        var endY = y + 1 > GamePanel.Rows-1 ? y : y + 1;
+        
+
+        var livingNeighbours = 0;
+        
+
+        
+        for (var i = startY; i <= endY; i++)
+        {
+            for (var j = startX; j <= endX; j++)
+            {
+                if(i == y && j == x)
+                    continue;
+                
+                if(_livingCellsPositions.Contains((i, j)))
+                {
+                    livingNeighbours++;
+                }
+            }
+        }
+
+        return livingNeighbours switch
+        {
+            2 => _livingCellsPositions.Contains((y, x)),
+            3 => true,
+            _ => false
+        };
+    }
+
+    private List<(int, int)> GetNeighbours(int y, int x)
+    {
+        var neighbours = new List<(int, int)>();
+        
+        var startX = x - 1 < 0 ? x : x - 1;
+        var endX = x + 1 > GamePanel.Columns-1 ? x : x + 1;
+        var startY = y - 1 < 0 ? y : y - 1;
+        var endY = y + 1 > GamePanel.Rows-1 ? y : y + 1;
+
+        
+        for (var i = startY; i <= endY; i++)
+        {
+            for (var j = startX; j <= endX; j++)
+            {
+                if(i == y && j == x)
+                    continue;
+                neighbours.Add((i, j));
+                
+            }
+        }
+
+        return neighbours;
     }
 
     private Button GetButton(int row, int column)
@@ -63,5 +180,19 @@ public partial class MainWindow : Window
         };
         button.Click += (sender, e) => { ButtonClick(sender, e, row, column);};
         return button;
+    }
+
+    private void PlayPause(object sender, RoutedEventArgs e)
+    {
+        if (_timer.Enabled)
+        {
+            PlayButton.Content = "Play";
+            _timer.Enabled = false;
+        }
+        else
+        {
+            PlayButton.Content = "Pause";
+            _timer.Enabled = true;
+        }
     }
 }

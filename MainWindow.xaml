@@ -7,6 +7,10 @@
         mc:Ignorable="d"
         Title="Game of life" Height="1080" Width="1080" ResizeMode="NoResize">
     <Grid>
-        <UniformGrid x:Name="GamePanel" Rows="100" Columns="100" Width="800" Height="800"></UniformGrid>
+        <StackPanel Orientation="Horizontal">
+            <Button Height="20" Width="20" Name="PlayButton" Click="PlayPause"></Button>
+            <UniformGrid x:Name="GamePanel" Rows="100" Columns="100" Width="800" Height="800" Margin="100 0
+            "></UniformGrid>
+        </StackPanel>
     </Grid>
 </Window>
